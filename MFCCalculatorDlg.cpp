@@ -8,6 +8,9 @@
 #include "MFCCalculatorDlg.h"
 #include "afxdialogex.h"
 
+#define pi 3.1415926535898
+#define std_angle (pi/180)//标准角
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -59,8 +62,12 @@ CMFCCalculatorDlg::CMFCCalculatorDlg(CWnd* pParent /*=nullptr*/)
 void CMFCCalculatorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT1, Str1);
-	DDX_Text(pDX, IDC_EDIT2, Str2);
+	DDX_Text(pDX, IDC_DEIT_Input, mStrInput);
+	DDX_Text(pDX, IDC_EDIT2, mStr1);
+	DDX_Text(pDX, IDC_EDIT3, mStr2);
+	DDX_Text(pDX, IDC_EDIT4, mStr3);
+	DDX_Text(pDX, IDC_EDIT5, mStr4);
+	DDX_Text(pDX, IDC_EDIT6, mStr5);
 }
 
 
@@ -70,8 +77,28 @@ BEGIN_MESSAGE_MAP(CMFCCalculatorDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	//ON_BN_CLICKED(IDC_BUTTON1, &CMFCCalculatorDlg::OnBnClickedButton1)
 	ON_EN_CHANGE(IDC_EDIT2, &CMFCCalculatorDlg::OnEnChangeEdit2)
+	ON_EN_CHANGE(IDC_DEIT_Input, &CMFCCalculatorDlg::OnEnChangeDeitInput)
+	ON_BN_CLICKED(IDC_BUTTON_SUB, &CMFCCalculatorDlg::OnBnClickedButtonSub)
+	ON_BN_CLICKED(IDC_BUTTON_SUM, &CMFCCalculatorDlg::OnBnClickedButtonSum)
+	ON_BN_CLICKED(IDC_BUTTON_DIVI, &CMFCCalculatorDlg::OnBnClickedButtonDivi)
+	ON_BN_CLICKED(IDC_BUTTON_MULT1, &CMFCCalculatorDlg::OnBnClickedButtonMult1)
+	ON_BN_CLICKED(IDC_BUTTON_EQU, &CMFCCalculatorDlg::OnBnClickedButtonEqu)
+	ON_BN_CLICKED(IDC_BUTTON_Back, &CMFCCalculatorDlg::OnBnClickedButtonBack)
+	ON_BN_CLICKED(IDC_BUTTON_Clear_All, &CMFCCalculatorDlg::OnBnClickedButtonClearAll)
+	ON_BN_CLICKED(IDC_BUTTON_Clear, &CMFCCalculatorDlg::OnBnClickedButtonClear)
+	ON_BN_CLICKED(IDC_BUTTON1, &CMFCCalculatorDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON2, &CMFCCalculatorDlg::OnBnClickedButton2)
 	ON_BN_CLICKED(IDC_BUTTON3, &CMFCCalculatorDlg::OnBnClickedButton3)
+	ON_BN_CLICKED(IDC_BUTTON4, &CMFCCalculatorDlg::OnBnClickedButton4)
+	ON_BN_CLICKED(IDC_BUTTON5, &CMFCCalculatorDlg::OnBnClickedButton5)
+	ON_BN_CLICKED(IDC_BUTTON6, &CMFCCalculatorDlg::OnBnClickedButton6)
+	ON_BN_CLICKED(IDC_BUTTON7, &CMFCCalculatorDlg::OnBnClickedButton7)
+	ON_BN_CLICKED(IDC_BUTTON8, &CMFCCalculatorDlg::OnBnClickedButton8)
 	ON_BN_CLICKED(IDC_BUTTON9, &CMFCCalculatorDlg::OnBnClickedButton9)
+	ON_BN_CLICKED(IDC_BUTTON0, &CMFCCalculatorDlg::OnBnClickedButton0)
+	ON_BN_CLICKED(IDC_BUTTON_DOT, &CMFCCalculatorDlg::OnBnClickedButtonDot)
+	
+	ON_EN_CHANGE(IDC_EDIT4, &CMFCCalculatorDlg::OnEnChangeEdit4)
 END_MESSAGE_MAP()
 
 
@@ -160,16 +187,71 @@ HCURSOR CMFCCalculatorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-
-void CMFCCalculatorDlg::OnBnClickedButton1()
+void CMFCCalculatorDlg::SaveFirstValue()
 {
-	// TODO: 在此添加控件通知处理程序代码
 	UpdateData(TRUE);
-	//Str1 = Str1+_T("你好！");
-	Str2 = Str2 + _T("\n") + Str1;
+	mNum1 = _wtof(mStrInput);
+	mTempStr = mStrInput;
+	mStrInput = L"";
 	UpdateData(FALSE);
-	Str1 = "";
+}
+
+void CMFCCalculatorDlg::Calculator()
+{
+	UpdateData(TRUE);
+	mNum2 = _wtof(mStrInput);
+	double result = 0.0f;
+	switch (mFlag)
+	{
+	case flag_Sum:						//加  
+		result = mNum1 + mNum2;
+		mTempStr = mTempStr + _T("+") + mStrInput + _T("=");
+		break;
+	case flag_Sub:						//减 
+		result = mNum1 - mNum2;
+		mTempStr = mTempStr + _T("-") + mStrInput + _T("=");
+		break;
+	case flag_Mult:					    //乘  
+		result = mNum1 * mNum2;
+		mTempStr = mTempStr + _T("x") + mStrInput + _T("=");
+		break;
+	case flag_Divi:						//除  
+		if (mNum2 == 0.0f)
+			{
+				result = mNum1;
+				mTempStr = _T("---除数不能为0！！！---");
+			}
+			else
+			{
+				result = mNum1 / mNum2;
+				mTempStr = mTempStr + _T("/") + mStrInput + _T("=");
+			}
+		break;
+	
+	default:
+		break;
+	}
+	//如果浮点数是个整数,就显示为整数
+	if (result - int(result) <= 1e-5)
+	{
+		mStrInput.Format(L"%d", (int)result);
+	}
+	else
+	{
+		mStrInput.Format(L"%f", result);
+	}
+	mTempStr += mStrInput;
+	mStr6 = mStr5;
+	mStr5 = mStr4;
+	mStr4 = mStr3;
+	mStr3 = mStr2;
+	mStr2 = mStr1;
+	mStr1 = mTempStr;
+	UpdateData(FALSE);
+
+	mNum1 = result;
+	mNum2 = 0.0f;
+
 }
 
 
@@ -184,13 +266,248 @@ void CMFCCalculatorDlg::OnEnChangeEdit2()
 }
 
 
+
+
+
+void CMFCCalculatorDlg::OnEnChangeEditInput()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
+}
+
+
+void CMFCCalculatorDlg::OnEnChangeEdit1()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
+}
+
+
+void CMFCCalculatorDlg::OnEnChangeEditinput()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
+}
+
+
+
+void CMFCCalculatorDlg::OnEnChangeDeitInput()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
+}
+
+
+void CMFCCalculatorDlg::OnBnClickedButtonEqu()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	Calculator();
+}
+
+
+
+
+
+void CMFCCalculatorDlg::OnBnClickedButtonBack()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	if (!mStrInput.IsEmpty()) {
+		mStrInput = mStrInput.Left(mStrInput.GetLength() - 1);
+	}
+	UpdateData(FALSE);
+}
+
+
+void CMFCCalculatorDlg::OnBnClickedButtonClearAll()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	mStrInput = L"";
+	mStr1 = L"";
+	mStr2 = L"";
+	mStr3 = L"";
+	mStr4 = L"";
+	mStr5 = L"";
+	mStr6 = L"";
+	mNum1 = 0.0f;
+	mNum2 = 0.0f;
+	mFlag = flag_Sum;
+	UpdateData(FALSE);
+}
+
+
+void CMFCCalculatorDlg::OnBnClickedButtonClear()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	mStrInput = L"";
+	mNum1 = 0.0f;
+	mNum2 = 0.0f;
+	mFlag = flag_Sum;
+	UpdateData(FALSE);
+}
+void CMFCCalculatorDlg::OnBnClickedButton1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	mStrInput += L"1";
+	UpdateData(FALSE);
+}
+
+void CMFCCalculatorDlg::OnBnClickedButton2()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	mStrInput += L"2";
+	UpdateData(FALSE);
+}
 void CMFCCalculatorDlg::OnBnClickedButton3()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	mStrInput += L"3";
+	UpdateData(FALSE);
 }
+
+
+void CMFCCalculatorDlg::OnBnClickedButton4()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	mStrInput += L"4";
+	UpdateData(FALSE);
+}
+
+
+void CMFCCalculatorDlg::OnBnClickedButton5()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	mStrInput += L"5";
+	UpdateData(FALSE);
+}
+
+
+void CMFCCalculatorDlg::OnBnClickedButton6()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	mStrInput += L"6";
+	UpdateData(FALSE);
+}
+
+
+void CMFCCalculatorDlg::OnBnClickedButton7()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	mStrInput += L"7";
+	UpdateData(FALSE);
+}
+
+
+
+void CMFCCalculatorDlg::OnBnClickedButton8()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	mStrInput += L"8";
+	UpdateData(FALSE);
+}
+
 
 
 void CMFCCalculatorDlg::OnBnClickedButton9()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	mStrInput += L"9";
+	UpdateData(FALSE);
+
+}
+
+
+void CMFCCalculatorDlg::OnBnClickedButton0()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	mStrInput += L"0";
+	UpdateData(FALSE);
+}
+
+
+
+void CMFCCalculatorDlg::OnBnClickedButtonDot()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	//如果没有小数点，则加上一个小数点，如果已有小数点就忽略此次的小数点，保证最多只有1个  
+	if (-1 == mStrInput.Find(L'.'))
+	{
+		mStrInput += L".";
+	}
+	UpdateData(FALSE);
+}
+
+
+void CMFCCalculatorDlg::OnBnClickedButtonDivi()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	// TODO: 在此添加控件通知处理程序代码
+	SaveFirstValue();
+	mFlag = flag_Divi;
+}
+
+
+
+void CMFCCalculatorDlg::OnBnClickedButtonMult1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	SaveFirstValue();
+	mFlag = flag_Mult;
+}
+
+
+void CMFCCalculatorDlg::OnBnClickedButtonSub()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	SaveFirstValue();
+	mFlag = flag_Sub;
+}
+
+
+void CMFCCalculatorDlg::OnBnClickedButtonSum()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	SaveFirstValue();
+	mFlag = flag_Sum;
+}
+
+
+void CMFCCalculatorDlg::OnEnChangeEdit4()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
 }

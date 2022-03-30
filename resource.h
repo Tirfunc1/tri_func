@@ -7,8 +7,7 @@
 #define IDS_ABOUTBOX                    101
 #define IDD_MFCCALCULATOR_DIALOG        102
 #define IDR_MAINFRAME                   128
-#define IDC_EDIT1                       1000
-#define IDC_EDIT_InPut                  1000
+#define IDC_DEIT_Input                  1000
 #define IDC_EDIT2                       1002
 #define IDC_BUTTON4                     1003
 #define IDC_BUTTON5                     1007
@@ -33,6 +32,8 @@
 #define IDC_BUTTON_Clear_All            1028
 #define IDC_BUTTON_Back                 1029
 #define IDC_BUTTON_Clear                1030
+#define IDC_BUTTON_Rad                  1031
+#define IDC_BUTTON11                    1032
 #define IDC_EDIT3                       1035
 #define IDC_EDIT4                       1036
 #define IDC_EDIT5                       1037
@@ -44,7 +45,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        130
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1007
+#define _APS_NEXT_CONTROL_VALUE         1033
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
