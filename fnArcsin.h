@@ -1,6 +1,8 @@
 #include <stdio.h>
-#include<iostream>
-using namespace std;
+
+
+#define PI (3.1415926)
+
 
 
 /**
@@ -9,7 +11,7 @@ using namespace std;
  * @param {double} inputNum: 输入的x
  * @return {double} outputNum: 输出的arcsinx
  */
-double arcsin( double inputNum)
+double fnArcsin( double inputNum)
 {
     
     double outputNum = 0;  //输出
@@ -39,16 +41,6 @@ double arcsin( double inputNum)
         outputNum = 0;
     }
     return outputNum;
-}
-
-int main () 
-{
-	double n;
-	cin>>n;
-	double m;
-    m=arcsin(n);
-	cout<<"m="<<m<<endl;
-	return 0;
 }
 
 
