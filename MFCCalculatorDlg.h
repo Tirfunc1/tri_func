@@ -10,8 +10,17 @@ enum Calculator_Flag {
 	flag_Sub,
 	flag_Mult,
 	flag_Divi,
+	flag_Sinx,
+	flag_Cosx,
+	flag_Arcsinx,
+	flag_Arctanx,
+	
+};
 
-
+enum AngleMode_Flag {
+	
+	flag_AngleMode,        //角度
+	flag_RadMode           //弧度
 };
 
 // CMFCCalculatorDlg 对话框
@@ -53,6 +62,7 @@ private :
 	double mNum1;				//输入的2个值
 	double mNum2;
 	Calculator_Flag mFlag;		//运算符号
+	AngleMode_Flag mAngleMode;            //角度弧度
 public:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnEnChangeEdit2();
@@ -79,4 +89,11 @@ public:
 	afx_msg void OnBnClickedButtonSub();
 	afx_msg void OnBnClickedButtonSum();
 	afx_msg void OnEnChangeEdit4();
+	afx_msg void OnBnClickedButtonRad();
+	afx_msg void OnBnClickedButtonsinx();
+	afx_msg void OnBnClickedButtonarctanx();
+	afx_msg void OnBnClickedButtonClear2();
+	afx_msg void OnBnClickedButtonarcsinx();
+	afx_msg void OnBnClickedButtoncosx();
+	afx_msg void OnBnClickedButtonsinx1();
 };

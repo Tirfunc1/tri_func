@@ -8,6 +8,13 @@
 #include "MFCCalculatorDlg.h"
 #include "afxdialogex.h"
 
+#include "fnArctan.h"
+#include "fnArcsin.h"
+#include "fnCos.h"
+#include "fnSin.h"
+
+
+
 #define pi 3.1415926535898
 #define std_angle (pi/180)//标准角
 
@@ -99,6 +106,11 @@ BEGIN_MESSAGE_MAP(CMFCCalculatorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_DOT, &CMFCCalculatorDlg::OnBnClickedButtonDot)
 	
 	ON_EN_CHANGE(IDC_EDIT4, &CMFCCalculatorDlg::OnEnChangeEdit4)
+	ON_BN_CLICKED(IDC_BUTTON_arctanx, &CMFCCalculatorDlg::OnBnClickedButtonarctanx)
+	
+	ON_BN_CLICKED(IDC_BUTTON_arcsinx, &CMFCCalculatorDlg::OnBnClickedButtonarcsinx)
+	ON_BN_CLICKED(IDC_BUTTON_cosx, &CMFCCalculatorDlg::OnBnClickedButtoncosx)
+	ON_BN_CLICKED(IDC_BUTTON_sinx1, &CMFCCalculatorDlg::OnBnClickedButtonsinx1)
 END_MESSAGE_MAP()
 
 
@@ -471,7 +483,6 @@ void CMFCCalculatorDlg::OnBnClickedButtonDot()
 void CMFCCalculatorDlg::OnBnClickedButtonDivi()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	// TODO: 在此添加控件通知处理程序代码
 	SaveFirstValue();
 	mFlag = flag_Divi;
 }
@@ -510,4 +521,141 @@ void CMFCCalculatorDlg::OnEnChangeEdit4()
 	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
 
 	// TODO:  在此添加控件通知处理程序代码
+}
+
+
+
+
+
+
+void CMFCCalculatorDlg::OnBnClickedButtonarctanx()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	mTempStr = _T("arctan(") + mStrInput + _T(")=");
+	mNum1 = _wtof(mStrInput);
+
+	double f = fnArctan(mNum1)/ std_angle;// * std_angle
+	if (f - int(f) <= 1e-5) {
+		mStrInput.Format(L"%d", (int)f); 
+	}
+	else {
+		mStrInput.Format(L"%f", f);
+	}
+	
+	mTempStr += mStrInput + _T("°");
+	mStr6 = mStr5;
+	mStr5 = mStr4;
+	mStr4 = mStr3;
+	mStr3 = mStr2;
+	mStr2 = mStr1;
+	mStr1 = mTempStr;
+	UpdateData(FALSE);
+
+	mNum1 = f;
+	mNum2 = 0.0f;
+	mFlag = flag_Arctanx;
+}
+
+
+
+
+void CMFCCalculatorDlg::OnBnClickedButtonarcsinx()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	mTempStr = _T("arcsin(") + mStrInput + _T(")=");
+	mNum1 = _wtof(mStrInput);
+
+	double f = Arcsin(mNum1)/ std_angle;// * std_angle
+	if (f - int(f) <= 1e-5) {
+		mStrInput.Format(L"%d", (int)f);
+	}
+	else {
+		mStrInput.Format(L"%f", f);
+	}
+
+	mTempStr += mStrInput + _T("°");
+	mStr6 = mStr5;
+	mStr5 = mStr4;
+	mStr4 = mStr3;
+	mStr3 = mStr2;
+	mStr2 = mStr1;
+	mStr1 = mTempStr;
+	UpdateData(FALSE);
+
+	mNum1 = f;
+	mNum2 = 0.0f;
+	mFlag = flag_Arcsinx;
+
+}
+
+
+void CMFCCalculatorDlg::OnBnClickedButtonRad()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	SaveFirstValue();
+	mAngleMode = flag_RadMode;
+}
+
+void CMFCCalculatorDlg::OnBnClickedButtoncosx()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	mTempStr = _T("cos(") + mStrInput + _T(")=");
+	mNum1 = _wtof(mStrInput);
+
+
+	double f = fnCos(mAngleMode, mNum1);/// std_angle;// * std_angle
+	if (f - int(f) <= 1e-5) {
+		mStrInput.Format(L"%d", (int)f);
+	}
+	else {
+		mStrInput.Format(L"%f", f);
+	}
+
+	mTempStr += mStrInput;
+	mStr6 = mStr5;
+	mStr5 = mStr4;
+	mStr4 = mStr3;
+	mStr3 = mStr2;
+	mStr2 = mStr1;
+	mStr1 = mTempStr;
+	UpdateData(FALSE);
+
+	mNum1 = f;
+	mNum2 = 0.0f;
+	mFlag = flag_Cosx;
+	mAngleMode = flag_AngleMode;
+}
+
+
+void CMFCCalculatorDlg::OnBnClickedButtonsinx1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	mTempStr = _T("sin(") + mStrInput + _T(")=");
+	mNum1 = _wtof(mStrInput);
+
+	double f = fnCos(mAngleMode, mNum1);/// std_angle;// * std_angle
+	if (f - int(f) <= 1e-5) {
+		mStrInput.Format(L"%d", (int)f);
+	}
+	else {
+		mStrInput.Format(L"%f", f);
+	}
+
+	mTempStr += mStrInput ;
+	mStr6 = mStr5;
+	mStr5 = mStr4;
+	mStr4 = mStr3;
+	mStr3 = mStr2;
+	mStr2 = mStr1;
+	mStr1 = mTempStr;
+	UpdateData(FALSE);
+
+	mNum1 = f;
+	mNum2 = 0.0f;
+	mFlag = flag_Sinx;
+	mAngleMode = flag_AngleMode;
 }

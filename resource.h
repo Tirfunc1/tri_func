@@ -29,6 +29,8 @@
 #define IDC_BUTTON_arcsinx              1023
 #define IDC_BUTTON_cosx                 1024
 #define IDC_BUTTON_sinx                 1025
+#define IDC_BUTTON_cosx2                1025
+#define IDC_BUTTON_sinx1                1025
 #define IDC_BUTTON_Clear_All            1028
 #define IDC_BUTTON_Back                 1029
 #define IDC_BUTTON_Clear                1030
