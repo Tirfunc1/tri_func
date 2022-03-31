@@ -33,7 +33,7 @@
 #define IDC_BUTTON_Back                 1029
 #define IDC_BUTTON_Clear                1030
 #define IDC_BUTTON_Rad                  1031
-#define IDC_BUTTON11                    1032
+#define IDC_BUTTON_Deg                  1032
 #define IDC_EDIT3                       1035
 #define IDC_EDIT4                       1036
 #define IDC_EDIT5                       1037

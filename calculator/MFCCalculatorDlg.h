@@ -10,6 +10,10 @@ enum Calculator_Flag {
 	flag_Sub,
 	flag_Mult,
 	flag_Divi,
+	flag_Cos,
+	flag_Sin,
+	flag_Arcsin,
+	flag_Arctan
 
 
 };
@@ -53,6 +57,8 @@ private :
 	double mNum1;				//输入的2个值
 	double mNum2;
 	Calculator_Flag mFlag;		//运算符号
+	int mMode;					//1对应角度，0对应弧度
+	int mSign;					//正负号标志
 public:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnEnChangeEdit2();
@@ -79,4 +85,10 @@ public:
 	afx_msg void OnBnClickedButtonSub();
 	afx_msg void OnBnClickedButtonSum();
 	afx_msg void OnEnChangeEdit4();
+	afx_msg void OnBnClickedButtonCos();
+	afx_msg void OnBnClickedButtonSin();
+	afx_msg void OnBnClickedButtonArcsin();
+	afx_msg void OnBnClickedButtonArctan();
+	afx_msg void OnBnClickedButtonRad();
+	afx_msg void OnBnClickedButtonDeg();
 };

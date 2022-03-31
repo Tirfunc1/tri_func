@@ -7,6 +7,10 @@
 #include "MFCCalculator.h"
 #include "MFCCalculatorDlg.h"
 #include "afxdialogex.h"
+#include "../tri_funcs/fnCos.h"
+#include "../tri_funcs/fnSin.h"
+#include "../tri_funcs/fnArcsin.h"
+#include "../tri_funcs/fnArctan.h"
 
 #define pi 3.1415926535898
 #define std_angle (pi/180)//标准角
@@ -57,6 +61,8 @@ CMFCCalculatorDlg::CMFCCalculatorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_MFCCALCULATOR_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	mMode = 1;
+	mSign = 1;
 }
 
 void CMFCCalculatorDlg::DoDataExchange(CDataExchange* pDX)
@@ -97,6 +103,13 @@ BEGIN_MESSAGE_MAP(CMFCCalculatorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON9, &CMFCCalculatorDlg::OnBnClickedButton9)
 	ON_BN_CLICKED(IDC_BUTTON0, &CMFCCalculatorDlg::OnBnClickedButton0)
 	ON_BN_CLICKED(IDC_BUTTON_DOT, &CMFCCalculatorDlg::OnBnClickedButtonDot)
+
+	ON_BN_CLICKED(IDC_BUTTON_cosx, &CMFCCalculatorDlg::OnBnClickedButtonCos)
+	ON_BN_CLICKED(IDC_BUTTON_sinx, &CMFCCalculatorDlg::OnBnClickedButtonSin)
+	ON_BN_CLICKED(IDC_BUTTON_arcsinx, &CMFCCalculatorDlg::OnBnClickedButtonArcsin)
+	ON_BN_CLICKED(IDC_BUTTON_arctanx, &CMFCCalculatorDlg::OnBnClickedButtonArctan)
+	ON_BN_CLICKED(IDC_BUTTON_Rad, &CMFCCalculatorDlg::OnBnClickedButtonRad)
+	ON_BN_CLICKED(IDC_BUTTON_Deg, &CMFCCalculatorDlg::OnBnClickedButtonDeg)
 	
 	ON_EN_CHANGE(IDC_EDIT4, &CMFCCalculatorDlg::OnEnChangeEdit4)
 END_MESSAGE_MAP()
@@ -132,6 +145,13 @@ BOOL CMFCCalculatorDlg::OnInitDialog()
 	//  执行此操作
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
+
+	CWnd *pWndRad = GetDlgItem(IDC_BUTTON_Rad);
+	pWndRad->EnableWindow(TRUE);
+
+
+	CWnd *pWndDeg = GetDlgItem(IDC_BUTTON_Deg);
+	pWndDeg->EnableWindow(FALSE);
 
 	// TODO: 在此添加额外的初始化代码
 
@@ -200,20 +220,36 @@ void CMFCCalculatorDlg::Calculator()
 {
 	UpdateData(TRUE);
 	mNum2 = _wtof(mStrInput);
+	if (mFlag != flag_Sub) {
+		mNum1 *= mSign;
+	}
+	
 	double result = 0.0f;
 	switch (mFlag)
 	{
 	case flag_Sum:						//加  
 		result = mNum1 + mNum2;
-		mTempStr = mTempStr + _T("+") + mStrInput + _T("=");
+		if (mSign == -1) {
+			mTempStr = _T("-") + mTempStr + _T("+") + mStrInput + _T("=");
+		}
+		else {
+			mTempStr = mTempStr + _T("+") + mStrInput + _T("=");
+		}
+		
 		break;
 	case flag_Sub:						//减 
 		result = mNum1 - mNum2;
 		mTempStr = mTempStr + _T("-") + mStrInput + _T("=");
 		break;
+
 	case flag_Mult:					    //乘  
 		result = mNum1 * mNum2;
-		mTempStr = mTempStr + _T("x") + mStrInput + _T("=");
+		if (mSign == -1) {
+			mTempStr = _T("-") + mTempStr + _T("x") + mStrInput + _T("=");
+		}
+		else {
+			mTempStr = mTempStr + _T("x") + mStrInput + _T("=");
+		}
 		break;
 	case flag_Divi:						//除  
 		if (mNum2 == 0.0f)
@@ -224,15 +260,73 @@ void CMFCCalculatorDlg::Calculator()
 			else
 			{
 				result = mNum1 / mNum2;
-				mTempStr = mTempStr + _T("/") + mStrInput + _T("=");
+				if (mSign == -1) {
+					mTempStr = _T("-") + mTempStr + _T("/") + mStrInput + _T("=");
+				}
+				else {
+					mTempStr = mTempStr + _T("/") + mStrInput + _T("=");
+				}
+				
 			}
+		break;
+
+	case flag_Cos:
+		result = fnCos(mMode, mNum1);
+		if (mSign == -1) {
+			mTempStr = _T("cos(-") + mTempStr + _T(")") + _T("=");
+		}
+		else {
+			mTempStr = _T("cos(") + mTempStr + _T(")") + _T("=");
+		}
+		
+		break;
+
+	case flag_Sin:
+		result = fnSin(mMode, mNum1);
+		if (mSign == -1) {
+			mTempStr = _T("sin(-") + mTempStr + _T(")") + _T("=");
+		}
+		else {
+			mTempStr = _T("sin(") + mTempStr + _T(")") + _T("=");
+		}
+		
+		break;
+
+	case flag_Arcsin:
+		if (mNum1 > 1 || mNum1 < -1) {
+			result = mNum1;
+			mTempStr = _T("---arcsin输入范围必须为[-1, 1]---");
+		}
+		else {
+
+			result = fnArcsin(mMode, mNum1);
+			if (mSign == -1) {
+				mTempStr = _T("arcsin(-") + mTempStr + _T(")") + _T("=");
+			}
+			else {
+				mTempStr = _T("arcsin(") + mTempStr + _T(")") + _T("=");
+			}
+		}		
+		break;
+
+	case flag_Arctan:
+		//result = fnArctan(mMode, mNum1);
+		result = fnArctan(mNum1);
+		if (mSign == -1) {
+			mTempStr = _T("arctan(-") + mTempStr + _T(")") + _T("=");
+		}
+		else {
+			mTempStr = _T("arctan(") + mTempStr + _T(")") + _T("=");
+		}
+		
 		break;
 	
 	default:
 		break;
 	}
 	//如果浮点数是个整数,就显示为整数
-	if (result - int(result) <= 1e-5)
+	double diff = result - int(result);
+	if (diff <= 1e-5 && diff >= -1e-5)
 	{
 		mStrInput.Format(L"%d", (int)result);
 	}
@@ -249,8 +343,16 @@ void CMFCCalculatorDlg::Calculator()
 	mStr1 = mTempStr;
 	UpdateData(FALSE);
 
-	mNum1 = result;
+	if (mFlag == flag_Cos || mFlag == flag_Sin || mFlag == flag_Arcsin || mFlag == flag_Arctan) {
+		mNum1 = 0.0;
+	}
+	else {
+		mNum1 = result;
+	}
+	
 	mNum2 = 0.0f;
+	mSign = 1;
+
 
 }
 
@@ -350,6 +452,8 @@ void CMFCCalculatorDlg::OnBnClickedButtonClearAll()
 	mNum1 = 0.0f;
 	mNum2 = 0.0f;
 	mFlag = flag_Sum;
+	mMode = 1;
+	mSign = 1;
 	UpdateData(FALSE);
 }
 
@@ -362,6 +466,8 @@ void CMFCCalculatorDlg::OnBnClickedButtonClear()
 	mNum1 = 0.0f;
 	mNum2 = 0.0f;
 	mFlag = flag_Sum;
+	mMode = 1;
+	mSign = 1;
 	UpdateData(FALSE);
 }
 void CMFCCalculatorDlg::OnBnClickedButton1()
@@ -491,6 +597,8 @@ void CMFCCalculatorDlg::OnBnClickedButtonSub()
 	// TODO: 在此添加控件通知处理程序代码
 	SaveFirstValue();
 	mFlag = flag_Sub;
+	mSign = -1;
+	
 }
 
 
@@ -499,6 +607,57 @@ void CMFCCalculatorDlg::OnBnClickedButtonSum()
 	// TODO: 在此添加控件通知处理程序代码
 	SaveFirstValue();
 	mFlag = flag_Sum;
+}
+
+void CMFCCalculatorDlg::OnBnClickedButtonCos()
+{
+	SaveFirstValue();
+	mFlag = flag_Cos;
+}
+
+void CMFCCalculatorDlg::OnBnClickedButtonSin()
+{
+	SaveFirstValue();
+	mFlag = flag_Sin;
+}
+
+void CMFCCalculatorDlg::OnBnClickedButtonArcsin()
+{
+	SaveFirstValue();
+	mFlag = flag_Arcsin;
+}
+
+void CMFCCalculatorDlg::OnBnClickedButtonArctan()
+{
+	SaveFirstValue();
+	mFlag = flag_Arctan;
+}
+
+void CMFCCalculatorDlg::OnBnClickedButtonRad()
+{
+	SaveFirstValue();	
+	mMode = 0;
+	CWnd *pWndRad = GetDlgItem(IDC_BUTTON_Rad);
+	pWndRad->EnableWindow(FALSE);
+
+	CWnd *pWndDeg = GetDlgItem(IDC_BUTTON_Deg);
+	pWndDeg->EnableWindow(TRUE);
+}
+
+void CMFCCalculatorDlg::OnBnClickedButtonDeg()
+{
+	SaveFirstValue();
+	mMode = 1;
+
+	CWnd *pWndRad = GetDlgItem(IDC_BUTTON_Rad);
+	pWndRad->EnableWindow(TRUE);
+	
+
+	CWnd *pWndDeg = GetDlgItem(IDC_BUTTON_Deg);
+	pWndDeg->EnableWindow(FALSE);
+	/*CMFCButton *tmp = (CMFCButton *)GetDlgItem(IDC_BUTTON_Deg);
+	tmp->SetFaceColor(RGB(146, 172, 209));*/
+	
 }
 
 
