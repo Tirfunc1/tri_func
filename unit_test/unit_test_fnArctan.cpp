@@ -1,22 +1,24 @@
 /*
  * @Description: 
  * @Author: Longjing Xia
- * @FilePath: \tri_func\unit_test_fnArctan.cpp
+ * @FilePath: \tri_func\unit_test\unit_test_fnArctan.cpp
  * @Date: 2022-03-27 15:07:39
- * @LastEditTime: 2022-03-27 15:30:56
+ * @LastEditTime: 2022-04-01 20:52:12
  */
 
 
-#include "fnArctan.h"
+#include "../tri_funcs/fnArctan.h"
 #include <stdio.h>
 #include <assert.h>
+#include <math.h>
 
 int main()
 {
-    printf("fnArctan(-2)= %lf\n", fnArctan(-0.5));
-    assert(fnArctan(1) - 0.78539816339745 < 0.0001);
-    assert(fnArctan(0.5) - 0.46364760 < 0.0001);
-    assert(fnArctan(0) == 0);
-    assert(fnArctan(-0.5) + 0.463647 < 0.01);
+    printf("fnArctan(-2)= %lf\n", fnArctan(1, -2));
+    assert(fabs(fnArctan(0, -2) -atan(-2)) < 0.0001) ;
+    assert(fnArctan(0, 1) - atan(1) < 0.0001);
+    assert(fnArctan(0, 0.5) - atan(0.5) < 0.0001);
+    assert(fnArctan(0, 0) == 0);
+    assert(fnArctan(0, -0.5) + atan(-0.5) < 0.01);
     printf("all passed.\n");
 }
