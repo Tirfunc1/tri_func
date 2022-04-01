@@ -13,9 +13,8 @@ enum Calculator_Flag {
 	flag_Cos,
 	flag_Sin,
 	flag_Arcsin,
-	flag_Arctan
-
-
+	flag_Arctan,
+	flag_Null
 };
 
 // CMFCCalculatorDlg 对话框

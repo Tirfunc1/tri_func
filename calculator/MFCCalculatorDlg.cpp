@@ -220,37 +220,30 @@ void CMFCCalculatorDlg::Calculator()
 {
 	UpdateData(TRUE);
 	mNum2 = _wtof(mStrInput);
-	if (mFlag != flag_Sub) {
-		mNum1 *= mSign;
-	}
+	
+	mNum1 *= mSign;
+	mNum2 *= mSign;
 	
 	double result = 0.0f;
+	CString op;
 	switch (mFlag)
 	{
 	case flag_Sum:						//加  
 		result = mNum1 + mNum2;
-		if (mSign == -1) {
-			mTempStr = _T("-") + mTempStr + _T("+") + mStrInput + _T("=");
-		}
-		else {
-			mTempStr = mTempStr + _T("+") + mStrInput + _T("=");
-		}
-		
+		op = _T("+");		
 		break;
+
 	case flag_Sub:						//减 
 		result = mNum1 - mNum2;
-		mTempStr = mTempStr + _T("-") + mStrInput + _T("=");
+		op = _T("-");
+		/*mTempStr = mTempStr + _T("-") + mStrInput + _T("=");*/
 		break;
 
 	case flag_Mult:					    //乘  
 		result = mNum1 * mNum2;
-		if (mSign == -1) {
-			mTempStr = _T("-") + mTempStr + _T("x") + mStrInput + _T("=");
-		}
-		else {
-			mTempStr = mTempStr + _T("x") + mStrInput + _T("=");
-		}
+		op = _T("x");
 		break;
+
 	case flag_Divi:						//除  
 		if (mNum2 == 0.0f)
 			{
@@ -260,36 +253,18 @@ void CMFCCalculatorDlg::Calculator()
 			else
 			{
 				result = mNum1 / mNum2;
-				if (mSign == -1) {
-					mTempStr = _T("-") + mTempStr + _T("/") + mStrInput + _T("=");
-				}
-				else {
-					mTempStr = mTempStr + _T("/") + mStrInput + _T("=");
-				}
-				
+				op = _T("/");				
 			}
 		break;
 
 	case flag_Cos:
 		result = fnCos(mMode, mNum1);
-		if (mSign == -1) {
-			mTempStr = _T("cos(-") + mTempStr + _T(")") + _T("=");
-		}
-		else {
-			mTempStr = _T("cos(") + mTempStr + _T(")") + _T("=");
-		}
-		
+		op = _T("cos");		
 		break;
 
 	case flag_Sin:
 		result = fnSin(mMode, mNum1);
-		if (mSign == -1) {
-			mTempStr = _T("sin(-") + mTempStr + _T(")") + _T("=");
-		}
-		else {
-			mTempStr = _T("sin(") + mTempStr + _T(")") + _T("=");
-		}
-		
+		op = _T("sin");		
 		break;
 
 	case flag_Arcsin:
@@ -300,30 +275,46 @@ void CMFCCalculatorDlg::Calculator()
 		else {
 
 			result = fnArcsin(mMode, mNum1);
-			if (mSign == -1) {
-				mTempStr = _T("arcsin(-") + mTempStr + _T(")") + _T("=");
-			}
-			else {
-				mTempStr = _T("arcsin(") + mTempStr + _T(")") + _T("=");
-			}
+			op = _T("arcsin");
 		}		
 		break;
 
 	case flag_Arctan:
-		//result = fnArctan(mMode, mNum1);
-		result = fnArctan(mNum1);
-		if (mSign == -1) {
-			mTempStr = _T("arctan(-") + mTempStr + _T(")") + _T("=");
-		}
-		else {
-			mTempStr = _T("arctan(") + mTempStr + _T(")") + _T("=");
-		}
-		
+		result = fnArctan(mMode, mNum1);
+		//result = fnArctan(mNum1);
+		op = _T("arctan");		
 		break;
 	
 	default:
 		break;
 	}
+
+	if (mFlag == flag_Sum || mFlag == flag_Sub || mFlag == flag_Mult || mFlag == flag_Divi) {
+		if (mNum1 < 0) {
+			mTempStr = _T("(-") + mTempStr + _T(")") + op;
+		}
+		else {
+			mTempStr = mTempStr + op;
+		}
+
+		if (mNum2 < 0) {
+			mTempStr = mTempStr + _T("(-") + mStrInput + _T(")");
+		}
+		else {
+			mTempStr = mTempStr + mStrInput;
+		}
+	}
+	else {
+		if (mNum1 < 0) {
+			mTempStr = op + _T("(-") + mTempStr + _T(")");
+		}
+		else {
+			mTempStr = op + _T("(") + mTempStr + _T(")");
+		}
+
+	}
+	mTempStr += _T(" = ");
+	
 	//如果浮点数是个整数,就显示为整数
 	double diff = result - int(result);
 	if (diff <= 1e-5 && diff >= -1e-5)
@@ -341,19 +332,20 @@ void CMFCCalculatorDlg::Calculator()
 	mStr3 = mStr2;
 	mStr2 = mStr1;
 	mStr1 = mTempStr;
+
+	mNum1 = 0.0f;
+	mNum2 = 0.0f;
+	mSign = 1;
+	mFlag = flag_Null;
 	UpdateData(FALSE);
 
-	if (mFlag == flag_Cos || mFlag == flag_Sin || mFlag == flag_Arcsin || mFlag == flag_Arctan) {
+	/*if (mFlag == flag_Cos || mFlag == flag_Sin || mFlag == flag_Arcsin || mFlag == flag_Arctan) {
 		mNum1 = 0.0;
 	}
 	else {
 		mNum1 = result;
-	}
+	}*/
 	
-	mNum2 = 0.0f;
-	mSign = 1;
-
-
 }
 
 
@@ -419,7 +411,12 @@ void CMFCCalculatorDlg::OnEnChangeDeitInput()
 void CMFCCalculatorDlg::OnBnClickedButtonEqu()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	Calculator();
+	if (mFlag != flag_Null) {
+		Calculator();
+	}
+	else {
+		return;
+	}
 }
 
 
@@ -451,7 +448,7 @@ void CMFCCalculatorDlg::OnBnClickedButtonClearAll()
 	mStr6 = L"";
 	mNum1 = 0.0f;
 	mNum2 = 0.0f;
-	mFlag = flag_Sum;
+	mFlag = flag_Null;
 	mMode = 1;
 	mSign = 1;
 	UpdateData(FALSE);
@@ -595,10 +592,13 @@ void CMFCCalculatorDlg::OnBnClickedButtonMult1()
 void CMFCCalculatorDlg::OnBnClickedButtonSub()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	SaveFirstValue();
-	mFlag = flag_Sub;
-	mSign = -1;
-	
+	if (mFlag == flag_Null && mFlag != flag_Sub) {
+		SaveFirstValue();
+		mFlag = flag_Sub;
+	}
+	else {
+		mSign = -1;
+	}	
 }
 
 
